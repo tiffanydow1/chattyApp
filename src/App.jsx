@@ -13,10 +13,12 @@ class App extends Component {
       messages: [
         {
           username: "Bob",
+          id: 1,
           content: "Has anyone seen my marbles?",
         },
         {
           username: "Anonymous",
+          id: 2,
           content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
         }
       ]
