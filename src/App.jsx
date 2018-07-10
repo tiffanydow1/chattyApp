@@ -3,6 +3,10 @@ import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 import Message from './Message.jsx';
 
+function generateRandomString() {
+ return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
+}
+
 class App extends Component {
 
   constructor(props) {
@@ -24,12 +28,41 @@ class App extends Component {
       ]
     };
 
+    this.handleNewMessage = this.handleNewMessage.bind(this);
+
   }
 
+  handleNewMessage = event => {
+
+    if (event.key === 'Enter') {
+            console.log(event.target.value);
+
+      const newMessages = {
+        id: generateRandomString(),
+        username: 'Anonymous',
+        content: event.target.value
+      }
+      const messages = this.state.messages.concat(newMessages);
+
+      this.setState({messages: messages})
+
+      event.target.value = "";
+    }
+
+  }
 
     componentDidMount(){
-
-    }
+      console.log("componentDidMount <App />");
+      setTimeout(() => {
+      console.log("Simulating incoming message");
+      // Add a new message to the list of messages in the data store
+      const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
+      const messages = this.state.messages.concat(newMessage);
+      // Update the state of the app component.
+      // Calling setState will trigger a call to render() in App and all child components.
+      this.setState({messages: messages});
+    }, 3000);
+  }
 
   render() {
     return (
@@ -40,7 +73,7 @@ class App extends Component {
 
         <MessageList messages={this.state.messages} />
 
-        <ChatBar currentUser={this.state.currentUser} />
+        <ChatBar handleNewMessage={this.handleNewMessage} currentUser={this.state.currentUser} />
       </div>
     );
   }
