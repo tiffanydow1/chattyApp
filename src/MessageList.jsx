@@ -3,10 +3,23 @@ import Message from './Message.jsx';
 
 class MessageList extends Component {
 
+  constructor(props) {
+    super(props);
+
+    }
+
   render() {
+
     return(
     <main className="messages">
-      <Message />
+
+      {
+        this.props.messages.map(messages => {
+          return <Message messages={messages} />
+        })
+      }
+
+
     </main>
 
     )
@@ -15,3 +28,5 @@ class MessageList extends Component {
 
 
 export default MessageList;
+
+
