@@ -14,18 +14,7 @@ class App extends Component {
 
     this.state = {
       currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [
-        {
-          username: "Bob",
-          id: 1,
-          content: "Has anyone seen my marbles?",
-        },
-        {
-          username: "Anonymous",
-          id: 2,
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
+      messages: [] //messages comimg from server will be stored here as they arrive
     };
 
     this.handleNewMessage = this.handleNewMessage.bind(this);
@@ -35,23 +24,44 @@ class App extends Component {
   handleNewMessage = event => {
 
     if (event.key === 'Enter') {
-            console.log(event.target.value);
 
       const newMessages = {
-        id: generateRandomString(),
+        //id: generateRandomString(),
         username: 'Anonymous',
         content: event.target.value
       }
       const messages = this.state.messages.concat(newMessages);
 
       this.setState({messages: messages})
-
+      this.socket.send(JSON.stringify(newMessages));
       event.target.value = "";
     }
 
   }
 
+
     componentDidMount(){
+
+      //creating WebSocket object - attempts to open connection w. server
+      this.socket = new WebSocket("ws://localhost:3001");
+
+      this.socket.onopen = (event) => {
+
+        console.log("Connected to the server!!!");
+
+        //this.socket.addEventListener("messages", receiveNewMessage);
+
+      }
+
+        this.socket.onmessage = (message) => {
+          console.log("message", message.data);
+          let newMessage = JSON.parse(message.data);
+          const messages = this.state.messages.concat(newMessage);
+          this.setState({messages: messages});
+      }
+
+
+
       console.log("componentDidMount <App />");
       setTimeout(() => {
       console.log("Simulating incoming message");
@@ -79,3 +89,6 @@ class App extends Component {
   }
 }
 export default App;
+
+
+
