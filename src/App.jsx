@@ -18,6 +18,7 @@ class App extends Component {
     };
 
     this.handleNewMessage = this.handleNewMessage.bind(this);
+    this.handleNewUsername = this.handleNewUsername.bind(this);
 
   }
 
@@ -27,7 +28,7 @@ class App extends Component {
 
       const newMessages = {
         //id: generateRandomString(),
-        username: 'Anonymous',
+        username: this.state.currentUser.name,
         content: event.target.value
       }
       const messages = this.state.messages.concat(newMessages);
@@ -39,6 +40,13 @@ class App extends Component {
 
   }
 
+  handleNewUsername = event => {
+
+    if (event.key === 'Enter') {
+      this.setState({currentUser: {name: event.target.value }});
+    }
+      //console.log(this.state.currentUser);
+  }
 
     componentDidMount(){
 
@@ -83,7 +91,7 @@ class App extends Component {
 
         <MessageList messages={this.state.messages} />
 
-        <ChatBar handleNewMessage={this.handleNewMessage} currentUser={this.state.currentUser} />
+        <ChatBar handleNewUsername={this.handleNewUsername} handleNewMessage={this.handleNewMessage} currentUser={this.state.currentUser} />
       </div>
     );
   }
