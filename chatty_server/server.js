@@ -23,10 +23,19 @@ wss.on('connection', (ws) => {
   console.log('Client connected');
 
   ws.on('message', function(event) {
-    console.log("hello");
     let msg = JSON.parse(event);
     console.log('User ' + msg.username + " " + 'says ' + msg.content);
     msg.id = uuid();
+
+    switch(msg.type) {
+      case "postNotification":
+        msg.type = "incomingNotification";
+        break;
+      case "postMessage":
+        msg.type = "incomingMessage";
+        break;
+      default:
+    }
 
     let messageString = JSON.stringify(msg);
     console.log(messageString);
