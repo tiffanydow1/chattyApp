@@ -1,4 +1,4 @@
-// jshint esversion 6
+
 import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
@@ -10,7 +10,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: [], //messages comimg from server will be stored here as they arrive
       activeUsers: 0
     };
@@ -28,12 +28,12 @@ class App extends Component {
         username: this.state.currentUser.name,
         content: event.target.value
       }
+
       const messages = this.state.messages.concat(newMessages);
       this.setState({messages: messages})
       this.socket.send(JSON.stringify(newMessages));
       event.target.value = "";
     }
-
   }
 
   handleNewUsername = event => {
@@ -43,9 +43,8 @@ class App extends Component {
         type: "postNotification"
       }
       const messages = this.state.messages.concat(newNotifications);
-      this.setState({messages: messages,currentUser: {name: event.target.value }})
+      this.setState({messages: messages,currentUser: {name: event.target.value }});
       this.socket.send(JSON.stringify(newNotifications));
-
     }
   }
 
@@ -55,23 +54,18 @@ class App extends Component {
       this.socket = new WebSocket("ws://localhost:3001");
 
       this.socket.onopen = (event) => {
-        console.log("Connected to the server!!!");
-      }
+     }
 
         this.socket.onmessage = (message) => {
-          console.log("message", message.data);
           let messageData = JSON.parse(message.data);
           let messages = that.state.messages.concat(messageData);
 
           switch(messageData.type) {
             case "incomingMessage":
-
               that.setState({messages: messages});
-
               break;
             case "incomingNotification":
               that.setState({messages: messages});
-
               break;
             case "onlineUsers":
               that.setState({ activeUsers: messageData.users, messages: messages});
@@ -79,10 +73,8 @@ class App extends Component {
             default:
               throw new Error("Unknown event type " + messageData.type);
           }
-        }
-
-      console.log("componentDidMount <App />");
-  }
+       }
+    }
 
   render() {
     return (
@@ -95,7 +87,7 @@ class App extends Component {
         <MessageList messages={this.state.messages} />
 
         <ChatBar handleNewUsername={this.handleNewUsername} handleNewMessage={this.handleNewMessage}
-     currentUser={this.state.currentUser} />
+        currentUser={this.state.currentUser} />
       </div>
     );
   }

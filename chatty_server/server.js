@@ -16,6 +16,7 @@ const server = express()
 // Create the WebSockets server
 const wss = new SocketServer.Server({ server });
 
+//function to determine # of users online at one time
 numberOfUsers = () => {
   let onlineUser = {
     type: 'onlineUsers',
@@ -39,9 +40,8 @@ wss.on('connection', (ws) => {
 
   ws.on('message', function(event) {
     let msg = JSON.parse(event);
-    console.log('User ' + msg.username + " " + 'says ' + msg.content);
     msg.id = uuid();
-console.log("weuhf", msg.type);
+
     switch(msg.type) {
       case "postNotification":
         msg.type = "incomingNotification";
@@ -54,7 +54,7 @@ console.log("weuhf", msg.type);
 
     let messageString = JSON.stringify(msg);
     let numberOfUsers = wss.clients.size;
-    console.log(messageString);
+
     wss.clients.forEach(function each(client) {
       if(client.readyState === SocketServer.OPEN) {
         client.send(messageString);
