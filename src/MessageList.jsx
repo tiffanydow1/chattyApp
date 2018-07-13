@@ -15,10 +15,14 @@ class MessageList extends Component {
 
       {
         this.props.messages.map((message, id) => {
-          if (message.type = "incomingMessage") {
+          if (message.type === "incomingMessage") {
             return <Message key={id} user={message.username} content={message.content} />
-          } else {
-            return <Notification user={message.username} content={message.content} />
+          } else if(message.type === "incomingNotification"){
+            return(
+              <div>
+                <span className="message-content" style={{fontStyle: 'italic'}}>{message.content}</span>
+              </div>
+              )
           }
 
         })

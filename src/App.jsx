@@ -4,10 +4,6 @@ import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 import Message from './Message.jsx';
 
-// function generateRandomString() {
-//  return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
-// }
-
 class App extends Component {
 
   constructor(props) {
@@ -25,11 +21,9 @@ class App extends Component {
   }
 
   handleNewMessage = event => {
-
     if (event.key === 'Enter') {
 
       const newMessages = {
-        //id: generateRandomString(),
         type: "postMessage",
         username: this.state.currentUser.name,
         content: event.target.value
@@ -43,23 +37,17 @@ class App extends Component {
   }
 
   handleNewUsername = event => {
-
     if (event.key === 'Enter') {
-      this.setState({currentUser: {name: event.target.value }});
-
-
       const newNotifications = {
-        content: this.state.currentUser.name + " changed their name to " + event.target.value
+        content: this.state.currentUser.name + " changed their name to " + event.target.value,
+        type: "postNotification"
       }
       const messages = this.state.messages.concat(newNotifications);
-
-      this.setState({messages: messages})
+      this.setState({messages: messages,currentUser: {name: event.target.value }})
       this.socket.send(JSON.stringify(newNotifications));
 
     }
   }
-
-
 
     componentDidMount(){
       const that = this;
@@ -70,45 +58,30 @@ class App extends Component {
         console.log("Connected to the server!!!");
       }
 
-
-
         this.socket.onmessage = (message) => {
           console.log("message", message.data);
           let messageData = JSON.parse(message.data);
           let messages = that.state.messages.concat(messageData);
+
           switch(messageData.type) {
             case "incomingMessage":
 
               that.setState({messages: messages});
 
               break;
-            case "incomingNotifcation":
-
+            case "incomingNotification":
               that.setState({messages: messages});
 
               break;
             case "onlineUsers":
-            debugger
               that.setState({ activeUsers: messageData.users, messages: messages});
-              debugger
               break;
             default:
               throw new Error("Unknown event type " + messageData.type);
           }
         }
 
-
-
       console.log("componentDidMount <App />");
-    //   setTimeout(() => {
-    //   console.log("Simulating incoming message");
-    //   // Add a new message to the list of messages in the data store
-    //   const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-    //   const messages = this.state.messages.concat(newMessage);
-    //   // Update the state of the app component.
-    //   // Calling setState will trigger a call to render() in App and all child components.
-    //   this.setState({messages: messages});
-    // }, 3000);
   }
 
   render() {

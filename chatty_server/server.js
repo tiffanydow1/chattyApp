@@ -41,7 +41,7 @@ wss.on('connection', (ws) => {
     let msg = JSON.parse(event);
     console.log('User ' + msg.username + " " + 'says ' + msg.content);
     msg.id = uuid();
-
+console.log("weuhf", msg.type);
     switch(msg.type) {
       case "postNotification":
         msg.type = "incomingNotification";
@@ -56,7 +56,7 @@ wss.on('connection', (ws) => {
     let numberOfUsers = wss.clients.size;
     console.log(messageString);
     wss.clients.forEach(function each(client) {
-      if(client !== ws && client.readyState === SocketServer.OPEN) {
+      if(client.readyState === SocketServer.OPEN) {
         client.send(messageString);
       }
     });
